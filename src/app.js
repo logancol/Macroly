@@ -6,6 +6,7 @@ require("dotenv").config();
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 const statusRoute = require("./routes/status");
+const nearbyRestaurantsSearchRoute = require("./routes/nearbyRestaurantSearch.js")
 
 const app = express();
 app.use(express.json());
@@ -31,6 +32,7 @@ app.use(
 );
 
 app.use("/status", statusRoute);
+app.use("/nearbyRestaurantSearch", nearbyRestaurantsSearchRoute)
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
