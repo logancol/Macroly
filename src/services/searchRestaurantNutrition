@@ -1,0 +1,26 @@
+// Hit nutritionix api with restaurant name or info
+
+const axios = require('axios');
+const baseURL = "https://trackapi.nutritionix.com/v2/search/instant"
+async function searchRestaurantNutrition(name){
+    // name being the restaurant name
+    try {
+        const response = await axios.get(baseURL, {
+        params: {
+            query: name // restaurant name (could be any food item as well)
+        },
+        headers: { // pass api key, app id, request json
+            'x-app-id': process.env.NUTRITIONX_ID,
+            'x-app-key': process.env.NUTRITIONX_KEY,
+            'Content-Type': 'application/json'
+        }
+        });
+        return response.data.branded;
+    }
+    catch (error){
+        console.error('Error Searching Nutritionix API:', error);
+        throw error;
+    }
+}
+
+module.exports = { searchRestaurantNutrition };

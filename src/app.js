@@ -7,6 +7,7 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 const statusRoute = require("./routes/status");
 const nearbyRestaurantsSearchRoute = require("./routes/nearbyRestaurantSearch.js")
+const restaurantNutritionSearchRoute = require("./routes/restaurantNutritionSearch.js")
 
 const app = express();
 app.use(express.json());
@@ -31,8 +32,10 @@ app.use(
   swaggerUi.setup(swaggerDocumentation)
 );
 
+app.use(cors());
 app.use("/status", statusRoute);
 app.use("/nearbyRestaurantSearch", nearbyRestaurantsSearchRoute)
+app.use("/restaurantNutritionSearch", restaurantNutritionSearchRoute)
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
