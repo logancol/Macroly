@@ -1,47 +1,69 @@
 import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import MealCard from './components/mealCard/mealCard.jsx';
+import MacroSearch from './components/macroSearch/macroSearch.jsx';
 import './App.css'
 import axios from 'axios'
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  // barebones connection between frontend and backend
+  // getting user location
+  const [location, setLocation] = useState({ latitude: null, longitude: null});
+  const [error, setError] = useState(null);
 
   const fetchAPI = async () => {
     const response = await axios.get("http://localhost:8626/restaurantNutritionSearch", {
       params: {name: "Chipolte"}
-    })
-    console.log(response.data)
+    });
+    console.log(response.data);
+  }
+
+  useEffect(() => { // do on app start
+    fetchAPI()
+  }, [])
+
+  const getUserLocation = () => {
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setLocation({latitude, longitude});
+        },
+        (err) => {
+          setError(err.message);
+        }
+      );
+    }
+    else {
+      setError("Geolocation not supported by browser")
+    }
   }
 
   useEffect(() => {
-    fetchAPI()
+    getUserLocation();
   }, [])
+
+  // we have user location, from then lets get a list of restaurants, then load in the items calling searchRestaurantNutrition for each
+  // using a card component
+
+  const mockMeal = {
+    food_name: "Chicken Bowl",
+    photo: "https://placehold.co/300x200",
+    calories: 600,
+    macros: {
+      protein: 40,
+      carbs: 50,
+      fat: 20,
+    },
+  }
 
   return (
     <>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1>Macroly Food Search</h1>
+        <h2>Input the desired macros and calories for your meal</h2>
+        <div className="macro-search-container">
+          <MacroSearch />
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
   )
 }

@@ -10,6 +10,23 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@progress/kendo-react-animation": "^12.1.0",
+    "@progress/kendo-react-buttons": "^12.1.0",
+    "@progress/kendo-react-data-tools": "^12.1.0",
+    "@progress/kendo-react-dateinputs": "^12.1.0",
+    "@progress/kendo-react-dialogs": "^12.1.0",
+    "@progress/kendo-react-dropdowns": "^12.1.0",
+    "@progress/kendo-react-grid": "^12.1.0",
+    "@progress/kendo-react-indicators": "^12.1.0",
+    "@progress/kendo-react-inputs": "^12.1.0",
+    "@progress/kendo-react-labels": "^12.1.0",
+    "@progress/kendo-react-layout": "^12.1.0",
+    "@progress/kendo-react-listbox": "^12.1.0",
+    "@progress/kendo-react-notification": "^12.1.0",
+    "@progress/kendo-react-popup": "^12.1.0",
+    "@progress/kendo-react-progressbars": "^12.1.0",
+    "@progress/kendo-react-tooltip": "^12.1.0",
+    "@progress/kendo-theme-default": "^12.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
