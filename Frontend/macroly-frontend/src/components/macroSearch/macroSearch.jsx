@@ -4,7 +4,7 @@ import './macroSearch.css'
 
 // component used to capture search data and then the api call can happen in app jsx?
 
-function MacroSearch() {
+function MacroSearch({location}) {
     // we neex to set up text input to capture the fats, carbs, protein, and calories from the user
     // 
     const [proteinValue, setProteinValue] = useState('');

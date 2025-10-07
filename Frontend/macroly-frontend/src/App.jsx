@@ -61,7 +61,9 @@ function App() {
         <h1>Macroly Food Search</h1>
         <h2>Input the desired macros and calories for your meal</h2>
         <div className="macro-search-container">
-          <MacroSearch />
+          <MacroSearch location=
+          {{latitude: location.latitude? location.latitude : 0,
+           longitude: location.longitude? location.longitude : 0}}/>
         </div>
       </div>
     </>

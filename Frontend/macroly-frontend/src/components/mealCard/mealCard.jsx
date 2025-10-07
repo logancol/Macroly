@@ -4,7 +4,7 @@ import axios from 'axios'
 
 // receives a food_name, photo url, calories, and macros?
 
-function MealCard({ food_name, photo, calories, macros }) {
+function MealCard({ food_name, vendor, photo, calories, macros, distance, price }) {
     return (
         <Card
             style={{
@@ -25,6 +25,21 @@ function MealCard({ food_name, photo, calories, macros }) {
             {macros && (
                 <p style={{ margin: '5px 0', fontSize: '14px' }}>
                     Macros: {macros.protein}g Protein, {macros.carbs}g Carbs, {macros.fat}g Fat
+                </p>
+            )}
+            {distance && (
+                <p style={{ margin: '5px 0', fontSize: '14px' }}>
+                    Km from you: {distance}
+                </p>
+            )}
+            {price && (
+                <p style={{ margin: '5px 0', fontSize: '14px' }}>
+                    Item Price: {distance}
+                </p>
+            )}
+            {vendor && (
+                <p style={{ margin: '5px 0', fontSize: '14px' }}>
+                    Vendor: {vendor}
                 </p>
             )}
         </Card>
