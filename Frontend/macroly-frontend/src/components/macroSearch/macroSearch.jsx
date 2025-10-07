@@ -33,25 +33,25 @@ function MacroSearch({location}) {
         <form onSubmit={handleSubmit} className="macro-search-form">
             <div className = "macro-search-input">
                 <TextBox 
-                    fillMode="flat"
+                    fillMode="solid"
                     className="custom-textbox"
                     placeholder="Protein (g)" 
                     value={proteinValue} 
                     onChange={handleProteinChange}/>
                 <TextBox 
-                    fillMode="flat"
+                    fillMode="solid"
                     className="custom-textbox"
                     placeholder="Carbs (g)" 
                     value={carbValue} 
                     onChange={handleCarbChange}/>
                 <TextBox 
-                    fillMode="flat"
+                    fillMode="solid"
                     className="custom-textbox"
                     placeholder="Fat (g)" 
                     value={fatValue} 
                     onChange={handleFatChange}/>
                 <TextBox 
-                    fillMode="flat"
+                    fillMode="solid"
                     className="custom-textbox"
                     placeholder="Calories (kcal)" 
                     value={calorieValue} 

@@ -49,7 +49,16 @@ const { searchRestaurantNutrition } = require("../services/searchRestaurantNutri
  *         description: Food items in radius of location matching macronutrient specs.
  */
 router.get("/", async (request, response) => {
-  const { latitude, longitude, radius } = request.query
+  const { latitude, longitude, radius, protein, fat, carbs, calories } = request.query
+  // make call to search nearby restaurants
+  const restaurants = await searchNearbyRestaurants(latitude, longitude, radius);
+  // now we have restaurants and vicinities, we need to get nutrition info for each restaurant
+  
+
+
+
+
+
   const data = await searchNearbyRestaurants(latitude, longitude, radius)
   response.json(data)
 });
