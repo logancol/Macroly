@@ -1,4 +1,6 @@
 import {useState, useEffect} from 'react'
+import { Loader } from '@progress/kendo-react-indicators';
+import '@progress/kendo-theme-default/dist/all.css'
 import './macroSearch.css'
 
 // component used to capture search data and then the api call can happen in app jsx?
@@ -7,6 +9,7 @@ function MacroSearch({ searchHandler }) {
     // we neex to set up text input to capture the fats, carbs, protein, and calories from the user
     const [proteinValue, setProteinValue] = useState('');
     const [carbValue, setCarbValue] = useState('');
+    const [loading, setLoading] = useState(false);
     const [fatValue, setFatValue] = useState('');
     const [calorieValue, setCalorieValue] = useState('');
     const handleProteinChange = event => {
@@ -22,15 +25,22 @@ function MacroSearch({ searchHandler }) {
         setCalorieValue(event.target.value);
     };
 
-    const searchHandleInternal = (e) => {
+    const searchHandleInternal = async (e) => {
         e.preventDefault();
         const form = {
             protein: proteinValue,
             carbs: carbValue,
             fat: fatValue,
-            calories: calorieValue
+            calories: calorieValue,
         };
-        searchHandler(form);
+        setLoading(true);
+        try {
+            await searchHandler(form);
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -66,7 +76,18 @@ function MacroSearch({ searchHandler }) {
                     className="macro-input"
                 />
             </div>
-            <button type="submit">Search</button>
+            <button type="submit" disabled={loading} className="search-button">
+                {loading ? (
+                    <span className="loader-wrapper">
+                        <Loader 
+                            type="pulsing"
+                            style={{ color: "#ffffff", width: "24px", height: "24px", display: "block" }}
+                        />
+                    </span>
+                ) : (
+                    "Search"
+                )}
+            </button>
         </form>
     );
 }

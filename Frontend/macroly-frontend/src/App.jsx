@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import MealCard from './components/mealCard/mealCard.jsx';
 import MacroSearch from './components/macroSearch/macroSearch.jsx';
+import Masonry from "masonry-layout";
 import './App.css'
 import axios from 'axios'
 
@@ -8,6 +9,7 @@ function App() {
   // getting user location
   const [location, setLocation] = useState({ latitude: null, longitude: null});
   const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const getUserLocation = () => {
@@ -28,6 +30,7 @@ function App() {
   }
 
   const getSearchResults = async (form) => {
+
     const response = await axios.get("http://localhost:8626/macroSearch", {
       params: {
         latitude: location.latitude,

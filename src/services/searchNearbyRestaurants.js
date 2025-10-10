@@ -21,7 +21,7 @@ async function searchNearbyRestaurants(Latitude, Longitude, Radius){
             nextPageToken = response.data.next_page_token;
             // if google gives back a next page token we'll use it to get the rest of the results.
             if(nextPageToken){
-                await new Promise(resolve => setTimeout(resolve, 2000)) // next page token takes a sec to become valid
+                await new Promise(resolve => setTimeout(resolve, 200)) // next page token takes a sec to become valid
             }
         } while (nextPageToken);
         return allResults;

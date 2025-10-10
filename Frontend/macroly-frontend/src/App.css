@@ -24,35 +24,28 @@ h2 {
   line-height: 1.4;
 }
 
-.macro-search-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  gap: 1px;
-  padding-left: 30px;
-  padding-right: 30px;
-  padding-top: 30px;
-  padding-bottom: 30px;
-  box-shadow: 0 12px 12px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+.meal-cards-container {
+  margin: 0 auto;
+  display: grid;
   background-color: #e9e9e9;
+  border-radius: 8px;
+  padding-left: 6rem;
+  padding-right: 6rem;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  box-shadow: 0 12px 12px rgba(0, 0, 0, 0.1);
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: hidden; 
+  gap: 20px;
 }
 
-.meal-cards-container {
-  display: grid;
-  border-radius: 8px;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 2rem;
-  padding: 1rem;
-  width: 60%;
-  margin: 0 auto;
-  background-color: #e9e9e9;
-  max-height: 80vh; 
-  overflow-y: auto;
-  justify-items: center;
-  box-shadow: 0 12px 12px rgba(0, 0, 0, 0.1);
+.macro-search.container {
+  padding-left: 6rem;
+  align-items: center;
+  justify-content: center;
 }
+
 html, body, #root {
   width: 100%;
   height: 100%;
@@ -63,11 +56,11 @@ html, body, #root {
 
 .home-container {
   display: flex;
-  padding-left: 80px;
-  padding-right: 40px;
-  padding-top: 75px;
+  padding-top: 4rem;
   flex-direction: row;
+  padding-left: 6rem;
   align-items: center;
+  gap: 4rem;
   justify-content: center;
-  gap: 20px;
+
 }
