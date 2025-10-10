@@ -7,18 +7,8 @@ import axios from 'axios'
 function App() {
   // getting user location
   const [location, setLocation] = useState({ latitude: null, longitude: null});
+  const [searchResults, setSearchResults] = useState([]);
   const [error, setError] = useState(null);
-
-  const fetchAPI = async () => {
-    const response = await axios.get("http://localhost:8626/restaurantNutritionSearch", {
-      params: {name: "Chipolte"}
-    });
-    console.log(response.data);
-  }
-
-  useEffect(() => { // do on app start
-    fetchAPI()
-  }, [])
 
   const getUserLocation = () => {
     if(navigator.geolocation){
@@ -37,34 +27,43 @@ function App() {
     }
   }
 
+  const getSearchResults = async (form) => {
+    const response = await axios.get("http://localhost:8626/macroSearch", {
+      params: {
+        latitude: location.latitude,
+        longitude: location.longitude,
+        protein: form.protein,
+        carbs: form.carbs,
+        fat: form.fat,
+        calories: form.calories,
+        radius: 20000 // 20 km radius by default will make this adjustable
+      }
+    });
+    setSearchResults(response.data);
+    console.log(response.data);
+  }
+
   useEffect(() => {
     getUserLocation();
   }, [])
 
-  // we have user location, from then lets get a list of restaurants, then load in the items calling searchRestaurantNutrition for each
-  // using a card component
-
-  const mockMeal = {
-    food_name: "Chicken Bowl",
-    photo: "https://placehold.co/300x200",
-    calories: 600,
-    macros: {
-      protein: 40,
-      carbs: 50,
-      fat: 20,
-    },
-  }
-
   return (
     <>
-      <div>
+    <div className="home-container">
+      <div className="macro-search-container">
         <h1>Macroly Food Search</h1>
         <h2>Input the desired macros and calories for your meal</h2>
-        <div className="macro-search-container">
-          <MacroSearch location=
-          {{latitude: location.latitude? location.latitude : 0,
-           longitude: location.longitude? location.longitude : 0}}/>
-        </div>
+            <MacroSearch location=
+            {{latitude: location.latitude? location.latitude : 0,
+              longitude: location.longitude? location.longitude : 0}} searchHandler={getSearchResults}/>
+        <br></br>
+      </div>
+        {searchResults.length > 0 &&
+        <div className="meal-cards-container">
+            {searchResults.map((meal, index) => {
+              return <MealCard key={index} {...meal}></MealCard>
+            })}
+        </div>}
       </div>
     </>
   )
