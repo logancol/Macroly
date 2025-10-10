@@ -8,6 +8,7 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const statusRoute = require("./routes/status");
 const nearbyRestaurantsSearchRoute = require("./routes/nearbyRestaurantSearch.js")
 const restaurantNutritionSearchRoute = require("./routes/restaurantNutritionSearch.js")
+const macroSearchRoute = require("./routes/macroSearch.js")
 
 const app = express();
 app.use(express.json());
@@ -35,6 +36,7 @@ app.use(
 app.use(cors());
 app.use("/status", statusRoute);
 app.use("/nearbyRestaurantSearch", nearbyRestaurantsSearchRoute)
+app.use("/macroSearch", macroSearchRoute)
 app.use("/restaurantNutritionSearch", restaurantNutritionSearchRoute)
 
 app.listen(PORT, () => {

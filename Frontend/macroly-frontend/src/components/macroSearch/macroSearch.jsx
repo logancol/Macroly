@@ -6,7 +6,6 @@ import './macroSearch.css'
 
 function MacroSearch({location}) {
     // we neex to set up text input to capture the fats, carbs, protein, and calories from the user
-    // 
     const [proteinValue, setProteinValue] = useState('');
     const [carbValue, setCarbValue] = useState('');
     const [fatValue, setFatValue] = useState('');

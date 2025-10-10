@@ -1,53 +1,102 @@
 // Hit nutritionix api with restaurant name or info
 
 const axios = require('axios');
-const instantURL = "https://trackapi.nutritionix.com/v2/search/instant"
-const detailedURL = "https://trackapi.nutritionix.com/v2/search/item"
-async function searchRestaurantNutrition(name){
-    // name being the restaurant name
-    instantResults = [];
-    try {
-        const response = await axios.get(instantURL, {
-        params: {
-            query: name // restaurant name (could be any food item as well)
+
+// Endpoints
+const fatSecretURL = "https://platform.fatsecret.com/rest/foods/search/v1"
+const TOKEN_URL = "https://oauth.fatsecret.com/connect/token";
+
+// Get a fresh access token (valid for 1 hour)
+async function getAccessToken() {
+  try {
+    const response = await axios.post(
+      TOKEN_URL,
+      new URLSearchParams({
+        grant_type: "client_credentials",
+        scope: "basic"
+      }),
+      {
+        auth: {
+          username: process.env.FATSECRETOAUTH_ID,
+          password: process.env.FATSECRETOAUTH_SECRET
         },
-        headers: { // pass api key, app id, request json
-            'x-app-id': process.env.NUTRITIONX_ID,
-            'x-app-key': process.env.NUTRITIONX_KEY,
-            'Content-Type': 'application/json'
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
         }
+      }
+    );
+    return response.data.access_token;
+  } catch (error) {
+    console.error("Error getting FatSecret access token:", error.response?.data || error.message);
+    throw err;
+  }
+}
+
+async function searchRestaurantNutrition(name){
+    Results = [];
+    try {
+        const token = await getAccessToken();
+        const response = await axios.get(fatSecretURL, {
+            params: {
+                search_expression: name,
+                format: 'json',
+                max_results: 25
+            },
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
         });
-        instantResults = response.data.branded;
+        Results = response.data;
     }
     catch (error){
         console.error('Error Searching Nutritionix Instant API:', error);
         throw error;
     }
-    // now for each item in the instant results we hit search-item endpoint with the nix_item_id to get macroinfo
-    // note we can get macro, image info, everything we need
-    nixIds = instantResults.map(({ nix_item_id }) => nix_item_id);
-    nixIds = nixIds.splice(0, 20); // avoid hitting usage limits for now
-    const detailedResults = await Promise.all (
-        nixIds.map(async (nix_item_id) => {
-        try {
-            const detailedResponse = await axios.get(detailedURL, {
-                params: { nix_item_id },
-                headers: {
-                    'x-app-id': process.env.NUTRITIONX_ID,
-                    'x-app-key': process.env.NUTRITIONX_KEY,
-                    'Content-Type': 'application/json'
-                }
-            });
-            return detailedResponse.data;
-        }
-        catch (error){
-            console.error('Error Hitting Nutritionix Item Search API:', error);
-            throw error;
-        }
-    }));
-
-    // this approach won't work with the rate limit, try to split up between nutritionix and fat secret api
-    return detailedResults;
+    const mealRegex = new RegExp(
+        [
+            // Negative lookahead first: ignore these keywords anywhere in the string
+            "^(?!.*\\b(dressing|sauce|seasoning|syrup|oil|dip|condiment|spread)\\b)",
+            // Core meal words and combos
+            "(meal|combo|value\\s*(meal|box|pack|deal|combo|menu)|plate|platter|tray|set\\s*(menu|meal)|pack|box\\s*meal|snack\\s*box)",
+            // Burgers, sandwiches, wraps, handhelds
+            "|(burger|cheeseburger|hamburger|sandwich|sub|hoagie|baguette|panini|roll|wrap|gyro|shawarma|doner|kebab|falafel\\s*wrap|submarine)",
+            // Bowls, rice, noodles, pasta, soups
+            "|(bowl|rice\\s*bowl|poke|bento|curry|stir\\s*fry|fried\\s*rice|noodles?|ramen|udon|pho|pad\\s*thai|lo\\s*mein|spaghetti|pasta|lasagna|mac\\s*and\\s*cheese|mac\\s*n\\s*cheese|chow\\s*mein|yakisoba|noodle\\s*soup|miso\\s*soup)",
+            // Mexican & Latin American dishes
+            "|(burrito|taco|quesadilla|enchilada|fajita|nachos?|tostada|tamale|empanada|chimichanga|arepa|torta|bowl|mexican\\s*plate|fiesta\\s*meal)",
+            // Pizza & Italian items
+            "|(pizza|calzone|stromboli|garlic\\s*bread|pasta\\s*bake|pasta\\s*dish|gnocchi|risotto|alfredo|carbonara)", 
+            // Breakfast items
+            "|(breakfast|brunch|omelette|egg\\s*mcmuffin|mcmuffin|bagel\\s*sandwich|bacon\\s*egg\\s*cheese|sausage\\s*biscuit|croissant\\s*sandwich|toastie|english\\s*muffin|french\\s*toast|hash\\s*brown|pancake|waffle|breakfast\\s*burrito|big\\s*breakfast|morning\\s*meal|toaster\\s*strudel)",
+            // Lunch & dinner cues
+            "|(lunch|dinner|entree|entrée|main\\s*dish|main\\s*course|supper|plated\\s*meal|value\\s*lunch|daily\\s*special)",
+            // Chicken & meat dishes
+            "|(chicken\\s*(tenders?|strips?|fingers?|nuggets?|deluxe|selects?|pieces?|platter|bucket|meal)|hot\\s*wings|wings|bbq\\s*wings|drumsticks?|ribs?|steak|sirloin|fillet|filet|roast\\s*(beef|chicken|turkey)|grilled\\s*(chicken|fish|beef|steak)|crispy\\s*(chicken|fish|tenders)|barbecue\\s*(platter|combo)|meatloaf|brisket)",
+            // Seafood
+            "|(fish\\s*and\\s*chips|seafood\\s*platter|shrimp|prawns?|lobster|crab|fish\\s*taco|fish\\s*burger|clam\\s*chowder|grilled\\s*salmon|tuna\\s*steak|fish\\s*fillet)",        
+            // Asian cuisines & bowls
+            "|(sushi|sashimi|tempura|teriyaki|hibachi|teppanyaki|dumplings?|potstickers?|bao|baozi|dim\\s*sum|spring\\s*roll|egg\\s*roll|fried\\s*rice|katsu|bibimbap|kimchi\\s*stew|ramen\\s*bowl|miso\\s*soup)",    
+            // Mediterranean / Middle Eastern
+            "|(hummus\\s*platter|falafel|shawarma|gyro\\s*plate|tabbouleh|mezze|mixed\\s*grill|lamb\\s*kebab|kofta|dolma|stuffed\\s*grape\\s*leaves)",       
+            // Salads & healthy bowls
+            "|(salad|garden\\s*salad|chicken\\s*salad|caesar\\s*salad|protein\\s*bowl|grain\\s*bowl|poke\\s*bowl|veggie\\s*bowl|green\\s*bowl)",      
+            // Western comfort foods
+            "|(chili|soup|mac\\s*and\\s*cheese|shepherd'?s\\s*pie|chicken\\s*pot\\s*pie|casserole|stew|loaded\\s*fries|poutine|jambalaya|gumbo|baked\\s*ziti)",           
+            // Snack or fast-food style
+            "|(snack\\s*wrap|snack\\s*box|party\\s*pack|share\\s*box|kids?\\s*meal|family\\s*meal|value\\s*pack|happy\\s*meal|meal\\s*deal|grab\\s*and\\s*go)",           
+            // Bakery & cafe meals
+            "|(toastie|bagel|croissant|quiche|panini|melt|bistro\\s*box|savory\\s*muffin|breakfast\\s*box|pastry\\s*platter|flatbread)",            
+            // Fancy & marketing words that imply full meal
+            "|(deluxe|signature|supreme|classic|special|ultimate|premium|limited\\s*edition|artisan|house\\s*special|chef'?s\\s*choice|featured\\s*dish)",
+            // Global / UK / AU / misc
+            "|(roast\\s*dinner|sunday\\s*roast|takeaway\\s*meal|carvery|brekkie|chips\\s*and\\s*gravy|parma|parmy|chicken\\s*parma|mixed\\s*plate|curry\\s*plate|roast\\s*lamb|lamb\\s*shank)",
+            // Hearty share meals & platters
+            "|(feast|banquet|sampler|tasting\\s*platter|family\\s*pack|party\\s*feast|duo\\s*meal|trio\\s*combo|double\\s*stack|twin\\s*pack|meal\\s*for\\s*two|meal\\s*for\\s*four)"
+        ].join(""),
+        "i"
+    );
+    const meals = Results.foods.food.filter(food => mealRegex.test(food.food_name));
+    return meals;
 }
 
 module.exports = { searchRestaurantNutrition };
