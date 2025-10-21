@@ -2,9 +2,9 @@ import { useMemo } from "react";
 import * as d3 from "d3";
 
 const colors = [
-  "#fcfaacff",
-  "#d67373ff",
-  "#7a99ceff",
+  "#94e68cff",
+  "#668cbeff",
+  "#ccdadaff",
 ];
 // https://www.react-graph-gallery.com/donut
 

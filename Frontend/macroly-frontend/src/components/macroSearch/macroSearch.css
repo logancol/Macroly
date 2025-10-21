@@ -10,13 +10,12 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px; 
+  gap: .5rem; 
   border-radius: 10px;
   width: 100%;
 }
 
 .macro-input {
-    flex: 1 1 45%;
     padding: 0.6rem 1rem;
     border-radius: 10px;
     border: 1px solid #ddd;
@@ -25,6 +24,13 @@
     transition: all 0.2s ease;
     outline: none;
     height: 20px;
+}
+
+.macro-input-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
 }
 
 .loader-wrapper {
@@ -37,7 +43,7 @@
 .search-button {
   width: 20%;
   height: 3rem;
-  background-color: #865d5d;
+  background-color: #499b49;
   color: #ffffff; 
   border: none; 
   border-radius: 5px;
@@ -51,4 +57,30 @@
 
 .macro-input:hover {
   background-color: #4d4d4d;
+}
+
+.macro-label {
+  font-size: 1.15rem;
+  width: 6rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.grams {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #333;
+  width: 2rem;
+}
+
+.k-slider .k-slider-selection {
+  background-color: #7f98c2;
+}
+
+.k-slider .k-slider-track {
+  background-color: #d1d5db;
+}
+.k-slider .k-draghandle {
+  background-color: #2563eb; 
+  border-color: #2563eb;
 }

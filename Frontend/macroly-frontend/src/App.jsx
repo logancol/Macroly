@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
 import MealCard from './components/mealCard/mealCard.jsx';
 import MacroSearch from './components/macroSearch/macroSearch.jsx';
-import Masonry from "masonry-layout";
+import { APIProvider } from "@vis.gl/react-google-maps";
+import Header from './components/Header/Header.jsx';
+import CustomMap from './components/customMap/customMap.jsx';
 import './App.css'
 import axios from 'axios'
 
@@ -9,10 +11,13 @@ function App() {
   // getting user location
   const [location, setLocation] = useState({ latitude: null, longitude: null});
   const [searchResults, setSearchResults] = useState([]);
+  const [nutrientSearch, setNutrientSearch] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const GOOGLE_API_KEY = 'AIzaSyBmKlwHKv7-eUnkJuc0JsBerL3pDsj6FhA'
   const getUserLocation = () => {
+    console.log("getting location")
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -29,8 +34,12 @@ function App() {
     }
   }
 
-  const getSearchResults = async (form) => {
+  const getUserLocationClick = () => {
+    getUserLocation();
+    window.location.reload();
+  }
 
+  const getSearchResults = async (form) => {
     const response = await axios.get("http://localhost:8626/macroSearch", {
       params: {
         latitude: location.latitude,
@@ -43,30 +52,41 @@ function App() {
       }
     });
     setSearchResults(response.data);
+    setNutrientSearch({
+      protein: form.protein,
+      carbs: form.carbs,
+      calories: form.calories,
+      fat: form.fat
+    })
     console.log(response.data);
   }
 
   useEffect(() => {
     getUserLocation();
-  }, [])
+  });
 
   return (
     <>
-    <div className="home-container">
-      <div className="macro-search-container">
-        <h1>Macroly Food Search</h1>
-        <h2>Input the desired macros and calories for your meal</h2>
-            <MacroSearch location=
-            {{latitude: location.latitude? location.latitude : 0,
-              longitude: location.longitude? location.longitude : 0}} searchHandler={getSearchResults}/>
-        <br></br>
+      <Header />
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: "3rem", backgroundColor: "#ffffff"}}>
+      {location.latitude == null && <button className="location-button" onClick={getUserLocationClick}>Share My Location</button>}
+      <div className="home-container">
+        {searchResults.length == 0 && <div className="macro-search-container">
+          <h1>Food Search</h1>
+          <h2>Share your location and select desired macros to perform a search of nearby meals!</h2>
+              <MacroSearch location=
+              {{latitude: location.latitude? location.latitude : 0,
+                longitude: location.longitude? location.longitude : 0}} searchHandler={getSearchResults}/>
+          <br></br>
+        </div>
+        }
+          {searchResults.length > 0 &&
+          <div className="meal-cards-container">
+              {searchResults.map((meal, index) => {
+                return <MealCard key={index} {...meal}></MealCard>
+              })}
+          </div>}
       </div>
-        {searchResults.length > 0 &&
-        <div className="meal-cards-container">
-            {searchResults.map((meal, index) => {
-              return <MealCard key={index} {...meal}></MealCard>
-            })}
-        </div>}
       </div>
     </>
   )

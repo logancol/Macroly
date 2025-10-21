@@ -1,5 +1,6 @@
 import {useState, useEffect} from 'react'
 import { Loader } from '@progress/kendo-react-indicators';
+import { Slider } from '@progress/kendo-react-inputs';
 import '@progress/kendo-theme-default/dist/all.css'
 import './macroSearch.css'
 
@@ -7,23 +8,28 @@ import './macroSearch.css'
 
 function MacroSearch({ searchHandler }) {
     // we neex to set up text input to capture the fats, carbs, protein, and calories from the user
-    const [proteinValue, setProteinValue] = useState('');
-    const [carbValue, setCarbValue] = useState('');
+    const [proteinValue, setProteinValue] = useState(0);
+    const [carbValue, setCarbValue] = useState(0);
     const [loading, setLoading] = useState(false);
-    const [fatValue, setFatValue] = useState('');
-    const [calorieValue, setCalorieValue] = useState('');
-    const handleProteinChange = event => {
-        setProteinValue(event.target.value);
-    };
-    const handleCarbChange = event => {
-        setCarbValue(event.target.value);
-    };
-    const handleFatChange = event => {
-        setFatValue(event.target.value);
-    };
-    const handleCalorieChange = event => {
-        setCalorieValue(event.target.value);
-    };
+    const [fatValue, setFatValue] = useState(0);
+    const [calorieValue, setCalorieValue] = useState(0);
+
+    const handleProteinChange = (e) => {
+        setProteinValue(Math.floor(e.value));
+        console.log(e.value)
+    }
+    const handleFatChange = (e) => {
+        setFatValue(Math.floor(e.value));
+        console.log(e.value)
+    }
+    const handleCarbChange = (e) => {
+        setCarbValue(Math.floor(e.value));
+        console.log(e.value)
+    }
+    const handleCalorieChange = (e) => {
+        setCalorieValue(Math.floor(e.value));
+        console.log(e.value)
+    }
 
     const searchHandleInternal = async (e) => {
         e.preventDefault();
@@ -47,34 +53,34 @@ function MacroSearch({ searchHandler }) {
         <form onSubmit={searchHandleInternal} 
         className="macro-search-form">
             <div className = "macro-search-input">
-                <input
-                    type="number"
-                    placeholder="Protein (g)"
-                    value={proteinValue}
-                    onChange={e => setProteinValue(e.target.value)}
-                    className="macro-input"
-                />
-                <input
-                    type="number"
-                    placeholder="Carbs (g)"
-                    value={carbValue}
-                    onChange={e => setCarbValue(e.target.value)}
-                    className="macro-input"
-                />
-                <input
-                    type="number"
-                    placeholder="Fat (g)"
-                    value={fatValue}
-                    onChange={e => setFatValue(e.target.value)}
-                    className="macro-input"
-                />
-                <input
-                    type="number"
-                    placeholder="Calories (kcal)"
-                    value={calorieValue}
-                    onChange={e => setCalorieValue(e.target.value)}
-                    className="macro-input"
-                />
+                <span className="macro-input-group">
+                    <p className="macro-label">{"Protein (g)"}</p>
+                    <Slider color="blue" onChange={handleProteinChange} step={1} defaultValue={0} value={proteinValue} min={0} max={200}></Slider>
+                    <p className="grams">
+                        <strong>{proteinValue.toLocaleString()}</strong>
+                    </p>
+                </span>
+                <span className="macro-input-group">
+                    <p className="macro-label">{"Fat (g)"}</p>
+                    <Slider color="blue" onChange={handleFatChange} step={1} defaultValue={0} value={fatValue} min={0} max={200}></Slider>
+                    <p className="grams">
+                        <strong>{fatValue.toLocaleString()}</strong>
+                    </p>
+                </span>
+                <span className="macro-input-group">
+                    <p className="macro-label">{"Carbs (g)"}</p>
+                    <Slider color="blue" onChange={handleCarbChange} step={1} defaultValue={0} value={carbValue} min={0} max={200}></Slider>
+                    <p className="grams">
+                        <strong>{carbValue.toLocaleString()}</strong>
+                    </p>
+                </span>
+                <span className="macro-input-group">
+                    <p className="macro-label">Calories</p>
+                    <Slider color="blue" onChange={handleCalorieChange} step={1} defaultValue={0} value={calorieValue} min={0} max={2500}></Slider>
+                    <p className="grams">
+                        <strong>{calorieValue.toLocaleString()}</strong>
+                    </p>
+                </span>
             </div>
             <button type="submit" disabled={loading} className="search-button">
                 {loading ? (

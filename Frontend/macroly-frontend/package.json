@@ -27,6 +27,7 @@
     "@progress/kendo-react-progressbars": "^12.1.0",
     "@progress/kendo-react-tooltip": "^12.1.0",
     "@progress/kendo-theme-default": "^12.1.0",
+    "@react-google-maps/api": "^2.20.7",
     "d3": "^7.9.0",
     "masonry-layout": "^4.2.2",
     "react": "^19.1.1",
