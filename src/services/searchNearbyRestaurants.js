@@ -16,7 +16,7 @@ async function searchNearbyRestaurants(Latitude, Longitude, Radius){
                     key: process.env.GOOGLE_API_KEY,
                     ...(nextPageToken && {pagetoken: nextPageToken})}
                 });
-            allResults = allResults.concat(response.data.results.map(({ name, vicinity }) => ({ name, vicinity })));
+            allResults = allResults.concat(response.data.results.map(({ name, vicinity, geometry: { location } }) => ({ name, vicinity, location })));
             // returning restaurant name and address
             nextPageToken = response.data.next_page_token;
             // if google gives back a next page token we'll use it to get the rest of the results.

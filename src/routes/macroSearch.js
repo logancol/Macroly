@@ -65,6 +65,7 @@ router.get("/", async (request, response) => {
         fatSecretId: meal.food_id,
         restaurant: restaurant.name,
         vicinity: restaurant.vicinity,
+        location: restaurant.location,
         calories: parseFloat(meal.caloriesMeal),
         fat: parseFloat(meal.fatMeal),
         carbs: parseFloat(meal.carbsMeal),
